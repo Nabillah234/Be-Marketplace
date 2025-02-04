@@ -16,9 +16,15 @@ return new class extends Migration
             $table->string('type_name');
             $table->timestamps();
         });
-        Schema::create('product', function (Blueprint $table) {
+        Schema::create('banners', function (Blueprint $table) {
             $table->id();
-            $table->string('product_name');
+            $table->string('banners_url');
+            $table->string('banners_url_name');
+            $table->timestamps();
+        });
+        Schema::create('products', function (Blueprint $table) {
+            $table->id();
+            $table->string('products_name');
             $table->foreignId('product_type_id')
             ->references('id')
             ->on('product_types')
@@ -39,5 +45,7 @@ return new class extends Migration
     {
         Schema::dropIfExists('product');
         Schema::dropIfExists('product_types');
+        Schema::dropIfExists('banners');
+        
     }
 };

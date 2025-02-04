@@ -12,8 +12,8 @@ class ProductController extends Controller
      */
     public function index()
     {
-        $data = Product::join("product_types", "product.product_type_id", "=", "product_types.id")
-            ->select("product.*", "product_types.type_name")
+        $data = Product::join("product_types", "products.product_type_id", "=", "product_types.id")
+            ->select("products.*", "product_types.type_name")
             ->get();
         return response([
             "massage" => "product type list",
@@ -27,7 +27,7 @@ class ProductController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'product_name' => 'required|unique:product,product_name',
+            'products_name' => 'required|unique:products,products_name',
             'product_type_id' => 'required|exists:product_types,id',
             'description' => 'required',
             'price' => 'required|numeric',
@@ -40,16 +40,16 @@ class ProductController extends Controller
         // $doc = str_replace(" ", "-", $time) . '.' . $request->profile_picture->extension();
         // $request->file("profile_picture")->move(public_path("upload/profile"), $doc);
 
-        $imagename = time().'.'.$request->img_url->extension();
+        $imagename = time() . '.' . $request->img_url->extension();
         $request->img_url->move(public_path('image'), $imagename);
 
         Product::create([
-            'product_name' => $request->product_name,
+            'products_name' => $request->products_name,
             'product_type_id' => $request->product_type_id,
             'description' => $request->description,
             'price' => $request->price,
             'stock' => $request->stock,
-            'img_url' => url('image/'.$imagename),
+            'img_url' => url('image/' . $imagename),
             'img_name' => $imagename,
 
         ]);
@@ -80,42 +80,42 @@ class ProductController extends Controller
      * Update the specified resource in storage.
      */
     public function update(Request $request, string $id)
-    {
-        $request->validate([
-            'product_name' => 'required|unique:product_types,type_name',
-            'product_type_id' => 'required',
-            'description' => 'required',
-            'price' => 'required',
-            'stock' => 'required',
-            'img_url' => 'required',
-        ]);
+{
+    $request->validate([
+        'products_name' => 'required|unique:products,products_name',
+        'product_type_id' => 'required|exists:product_types,id',
+        'description' => 'required',
+        'price' => 'required|numeric',
+        'stock' => 'required|numeric',
+        'img_url' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+    ]);
 
-
-        $data = Product::find($id);
-        if (is_null($data)) {
-            return response([
-                "massage" => "Product type not found",
-                "data" => [],
-            ], 404);
-        }
-        
-        
-        $imagename = time().'.'.$request->img_url->extension();
-        $request->img_url->move(public_path('image'), $imagename);
-
-        $data->type_name = $request->type_name;
-        $data->product_type_id = $request->product_type_id;
-        $data->description = $request->description;
-        $data->price = $request->price;
-        $data->stock = $request->stock;
-        $data->img_url = $request->img_url;
-        $data->img_name = $imagename;
-        $data->save();
-
+    $data = Product::find($id);
+    if (is_null($data)) {
         return response([
-            "massage" => "product type updated",
-        ]);
+            "message" => "Product not found",
+            "data" => [],
+        ], 404);
     }
+
+
+    $imagename = time() . '.' . $request->img_url->extension();
+    $request->img_url->move(public_path('image'), $imagename);
+
+    $data->products_name = $request->products_name;
+    $data->product_type_id = $request->product_type_id;
+    $data->description = $request->description;
+    $data->price = $request->price;
+    $data->stock = $request->stock;
+    $data->img_url = url('image/' . $imagename);
+    $data->img_name = $imagename;
+    $data->save();
+
+    return response([
+        "message" => "Product updated successfully",
+    ]);
+}
+
 
     /**
      * Remove the specified resource from storage.

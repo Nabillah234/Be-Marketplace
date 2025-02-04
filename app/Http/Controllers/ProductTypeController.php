@@ -18,26 +18,27 @@ class ProductTypeController extends Controller
             "data" => $data,
         ]);
     }
-    
+
     /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
     {
-        $request->validate([
-            'type_name' => 'required|unique:product_types,type_name',
-        ], 
-        [
-            'type_name.required' => 'is required',
-            'type_name.unique' => 'already exist',
-        ]
+        $request->validate(
+            [
+                'type_name' => 'required|unique:product_types,type_name',
+            ],
+            [
+                'type_name.required' => 'is required',
+                'type_name.unique' => 'already exist',
+            ]
         );
 
         ProductType::create([
             'type_name' => $request->type_name,
         ]);
 
-        return response([ "message" => "Product Type Created Successfully"],201);
+        return response(["message" => "Product Type Created Successfully"], 201);
     }
 
     /**
@@ -50,9 +51,9 @@ class ProductTypeController extends Controller
             return response([
                 "message" => "ini adalah sebuah method",
                 "data" => [],
-            ],404);
+            ], 404);
         }
-        
+
         return response([
             "message" => "ini adalah sebuah method",
             "data" => $data,
@@ -72,20 +73,21 @@ class ProductTypeController extends Controller
 
         if (is_null($data)) {
             return response([
-                "message" => "Product Type Not Found",
+                "message" => "ini adalah sebuah method",
                 "data" => [],
-            ],404);
+            ], 404);
         }
+
 
         $data->type_name = $request->type_name;
         $data->save();
+
 
         // ProductType::create([
         //     'type_name' => $request->type_name,
         // ]);
 
-        return response([ "message" => "Product Type Updated Successfully"],201);
-    
+        return response(["message" => "Product Type Update Successfully"], 200);
     }
 
     /**
@@ -96,11 +98,11 @@ class ProductTypeController extends Controller
         $data = ProductType::find($id);
         if (is_null($data)) {
             return response([
-                "message" => "ini adalah sebuah method",
+                "message" => "Product Not available",
                 "data" => [],
-            ],404);
+            ], 404);
         }
-        
+
         $data->delete();
 
         return response([
